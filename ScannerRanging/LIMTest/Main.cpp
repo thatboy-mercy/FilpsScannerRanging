@@ -336,20 +336,23 @@ int main()
 			TEXT_ARC(15);
 			TEXT_ARC(20);
 			TEXT_ARC(30);
+			TEXT_ARC(50);
+			TEXT_ARC(80);
+			TEXT_ARC(100);
 #undef TEXT_ARC
 		}
 
 		// ÖÐÐÄµã
 		setfillcolor(RGB(0XF0, 0, 0));
-		solidcircle(0, 0, 5);
+		solidcircle(0, 0, 3);
 
 		if (bIfInfo)
 		{
 			setorigin(0, 0);
 			setaspectratio(1, 1);
-
-			setlinecolor(0XE0E0E0);
-			setfillcolor(0X696666);
+			setlinestyle(PS_SOLID, 4);
+			setlinecolor(0X252525);
+			setfillcolor(0XE0E0E0);
 			fillrectangle(5, 5, textwidth(L"M - Show Measure") + 25, textheight(' ') * 8 + 25);
 			outtextxy(15, textheight(' ') * 0 + 15, L"I - Show Info");
 			outtextxy(15, textheight(' ') * 1 + 15, L"P - Show Point");
@@ -361,6 +364,7 @@ int main()
 			outtextxy(15, textheight(' ') * 6 + 15, (lim::tstring(L"Scale: ") + to_string(scale)).c_str());
 			outtextxy(15, textheight(' ') * 7 + 15, (lim::tstring(L"Angle: ") + to_string((int)lim::angleBeg) + L'~' + to_string((int)lim::angleEnd)).c_str());
 
+			setlinestyle(PS_SOLID, 1);
 			setaspectratio(scale, scale);
 			setorigin(originPos.x, originPos.y);
 		}
