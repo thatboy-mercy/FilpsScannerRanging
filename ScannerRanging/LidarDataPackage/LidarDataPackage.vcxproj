@@ -141,21 +141,28 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="LidarDataPackage.cpp" />
-    <ClCompile Include="LimDevice.cpp" />
     <ClCompile Include="LIM\lim.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EquipmentComm\EquipmentComm.h" />
+    <ClInclude Include="fps.h" />
     <ClInclude Include="LidarDataPackage.h" />
     <ClInclude Include="LimDevice.h" />
     <ClInclude Include="LIM\lim.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="EquipmentComm\EquipmentComm.lib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="EquipmentComm\EquipmentComm.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LidarDataPackage.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\Resources\Ranging.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

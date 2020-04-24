@@ -16,8 +16,8 @@ struct LimDevice
 {
 #ifdef UNICODE
 	using tstring = std::wstring;
-#	ifndef to_string
-#	define to_string std::to_wstring
+#	ifndef to_tstring
+#	define to_tstring std::to_wstring
 #	endif
 #else
 	using tstring = std::string;
@@ -102,30 +102,27 @@ public:
 protected:
 	void calcRectaCoord()
 	{
-		coordLock.lock();
-
-		if (rectaCoord.size() != polarCoord.size() || drawPolyCoord.size() != polarCoord.size() + 1)
-		{
-			rectaCoord.resize(polarCoord.size());
-			drawPolyCoord.resize(polarCoord.size()+1);
-		}
-
-		for (size_t indexRead = 0 , indexWrite = 0; indexRead < polarCoord.size(); indexRead++)
+		size_t indexWrite = 0;
+		for (size_t indexRead = 0; indexRead < polarCoord.size(); indexRead++)
 		{
 			if (polarCoord[indexRead].length > 900)
 				continue;
-			while (indexWrite >= rectaCoord.size())
+			if (indexWrite >= rectaCoord.size())
 			{
-				rectaCoord.push_back(RectaCoord());
-				drawPolyCoord.push_back(POINT());
+				rectaCoord.resize(indexWrite + 1);
+				drawPolyCoord.resize(indexWrite + 2);
 			}
 			rectaCoord[indexWrite].x = polarCoord[indexRead].length * cos(polarCoord[indexRead].angle / 180 * pi);
 			rectaCoord[indexWrite].y = polarCoord[indexRead].length * sin(polarCoord[indexRead].angle / 180 * pi);
-			drawPolyCoord[indexWrite].x = rectaCoord[indexWrite].x;
-			drawPolyCoord[indexWrite].y = -rectaCoord[indexWrite].y;
+			drawPolyCoord[indexWrite + 1].x = rectaCoord[indexWrite].x;
+			drawPolyCoord[indexWrite + 1].y = -rectaCoord[indexWrite].y;
 			indexWrite++;
 		}
-		coordLock.unlock();
+		if (rectaCoord.size() != indexWrite || drawPolyCoord.size() != indexWrite + 1)
+		{
+			rectaCoord.resize(indexWrite);
+			drawPolyCoord.resize(indexWrite + 1);
+		}
 	}
 
 	void onLMDRecive(LIM_HEAD& lim)
@@ -134,10 +131,11 @@ protected:
 			return;
 		LMD_INFO& lmd_info = *LMD_Info(&lim);
 		LMD_D_Type* lmd = LMD_D(&lim);
-		coordLock.lock();
+
 		angleBeg = lmd_info.nBAngle / 1000.;
 		angleEnd = lmd_info.nEAngle / 1000.;
 
+		std::lock_guard<std::mutex> lockGuard(coordLock);
 		if (polarCoord.size() != lmd_info.nMDataNum)
 			polarCoord.resize(lmd_info.nMDataNum);
 		for (int i = 0; i < lmd_info.nMDataNum; i++)
@@ -145,8 +143,6 @@ protected:
 			polarCoord[i].angle = static_cast<double>((lmd_info.nBAngle + i * (float)(lmd_info.nEAngle - lmd_info.nBAngle) / (lmd_info.nMDataNum - 1)) / 1000.0);
 			polarCoord[i].length = static_cast<double>(lmd[i]);
 		}
-		coordLock.unlock();
-
 		calcRectaCoord();
 	}
 
@@ -203,6 +199,9 @@ public:
 			++OnlineDeviceNumber;
 			staticDataLock.unlock();
 
+			DeviceList[_cid].polarCoord.reserve(541);
+			DeviceList[_cid].rectaCoord.reserve(541);
+			DeviceList[_cid].drawPolyCoord.reserve(542);
 			DeviceList[_cid].deviceIP = _ip;
 			DeviceList[_cid].isConnected = true;
 			DeviceList[_cid].cid = _cid;
@@ -222,8 +221,6 @@ public:
 		hasDeviceTryConnected = true;
 	}
 };
-
-
 
 #endif // !_LIM_DEVICE_H_
 

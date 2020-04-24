@@ -1,15 +1,61 @@
 #include "LimDevice.h"
 #include <easyx.h>
 #include <conio.h>
+#include "fps.h"
+
+#include <easyx.h>
+
+namespace thatboy
+{
+	namespace EasyX
+	{
+		// EasyX Window Extent Properties 
+		enum :int
+		{
+			EW_HASMAXIMIZI = 0X10    // Enable the maximize button
+			, EW_HASSIZEBOX = 0X20   // Enable the sizebox
+		};
+
+		// 
+		namespace _DataPackage {
+			typedef LRESULT CALLBACK CallBackType(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+			CallBackType* OLD_EasyXProc;
+			LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+			{
+				switch (msg)
+				{
+				case WM_SIZE:
+					Resize(nullptr, LOWORD(lParam), HIWORD(lParam));
+					break;
+				default:
+					return CallWindowProc(_DataPackage::OLD_EasyXProc, hwnd, msg, wParam, lParam);
+				}
+				return 0;
+			}
+		}
+
+
+		HWND initgraph(int width, int height, int flag = NULL)	// Initialize the graphics environment.
+		{
+			HWND hEasyX = ::initgraph(width, height, flag & ~(EW_HASMAXIMIZI | EW_HASSIZEBOX));
+			_DataPackage::OLD_EasyXProc = reinterpret_cast<_DataPackage::CallBackType*>(GetWindowLong(hEasyX, GWL_WNDPROC));
+			SetWindowLong(hEasyX, GWL_WNDPROC, reinterpret_cast<LONG>(_DataPackage::WndProc));
+			SetWindowLong(hEasyX, GWL_STYLE, GetWindowLong(hEasyX, GWL_STYLE) | (flag & EW_HASMAXIMIZI ? WS_MAXIMIZEBOX : 0) | (flag & EW_HASSIZEBOX ? WS_SIZEBOX : 0));
+			return hEasyX;
+		}
+	}
+}
+
 
 int main()
 {
+	using namespace thatboy;
 	LimDevice::InitEquipment();
 	LimDevice::OpenEquipment("192.168.1.210");
 	LimDevice::WaitFirstDeviceConnected();
 	LimDevice::StartLMDData();
 
-	initgraph(900, 900);
+	EasyX::initgraph(900, 900, EasyX::EW_HASMAXIMIZI | EasyX::EW_HASSIZEBOX);
 	BeginBatchDraw();
 	setbkcolor(WHITE);
 	setlinestyle(PS_SOLID, 1);
@@ -23,9 +69,11 @@ int main()
 	bool bIfMeasure = true;
 	bool bIfGrid = true;
 	bool bIfArea = true;
+
 	MOUSEMSG Msg = { NULL };
 	POINT mousePos = { NULL };
 	POINT originPos = { NULL };
+	size_t shutDownGridnfoFrameCount = 0;
 
 	originPos.x = getwidth() / 2;
 	originPos.y = getheight() / 2;
@@ -51,11 +99,21 @@ int main()
 					{
 						scale *= 1.1;
 						Msg.wheel -= 120;
+						if (scale > 400)
+						{
+							Msg.wheel = 0;
+							scale = 400;
+						}
 					}
 					while (Msg.wheel < 0)
 					{
 						scale *= 0.9;
 						Msg.wheel += 120;
+						if (scale < 0.000125)
+						{
+							Msg.wheel = 0;
+							scale = 0.000125;
+						}
 					}
 					bIfScaleChanged = true;
 					bIfOriChanged = true;
@@ -64,14 +122,6 @@ int main()
 				{
 					mousePos.x = Msg.x;
 					mousePos.y = Msg.y;
-				}
-				else if (Msg.uMsg == WM_MBUTTONDOWN)
-				{
-					scale = 1;
-					originPos.x = getwidth() / 2;
-					originPos.y = getheight() / 2;
-					setaspectratio(scale, scale);
-					setorigin(originPos.x, originPos.y);
 				}
 				if (Msg.mkLButton)
 				{
@@ -119,6 +169,14 @@ int main()
 			case 'M':
 				bIfMeasure = !bIfMeasure;
 				break;
+			case 'r':
+			case 'R':
+				scale = 1;
+				originPos.x = getwidth() / 2;
+				originPos.y = getheight() / 2;
+				setaspectratio(scale, scale);
+				setorigin(originPos.x, originPos.y);
+				break;
 			case 'q':
 			case 'Q':
 				goto closeJmp;
@@ -151,6 +209,12 @@ int main()
 					}
 				}
 			}
+
+			setlinecolor(0X423E3E);
+			setlinestyle(PS_SOLID, 3);
+			line(-10000, 0, 10000, 0);
+			line(0, -10000, 0, 0);
+
 		}
 		device.LockCoord();
 		if (bIfArea || bIfLine)
@@ -195,24 +259,60 @@ int main()
 #undef TEXT_ARC
 		}
 
-
 		if (bIfInfo)
 		{
+			int fps = (int)::fps();
 			setorigin(0, 0);
 			setaspectratio(1, 1);
 			setlinestyle(PS_SOLID, 4);
 			setlinecolor(0X252525);
 			setfillcolor(0XE0E0E0);
-			fillrectangle(5, 5, textwidth(L"M - Show Measure") + 25, textheight(' ') * 8 + 25);
-			outtextxy(15, textheight(' ') * 0 + 15, L"I - Show Info");
-			outtextxy(15, textheight(' ') * 1 + 15, L"P - Show Point");
-			outtextxy(15, textheight(' ') * 2 + 15, L"L - Show Line");
-			outtextxy(15, textheight(' ') * 3 + 15, L"A - Show Area");
-			outtextxy(15, textheight(' ') * 4 + 15, L"U - Show UI");
-			outtextxy(15, textheight(' ') * 5 + 15, L"M - Show Measure");
 
-			outtextxy(15, textheight(' ') * 6 + 15, (LimDevice::tstring(L"Scale: ") + to_string(scale)).c_str());
-			outtextxy(15, textheight(' ') * 7 + 15, (LimDevice::tstring(L"Angle: ") + to_string((int)device.angleBeg) + L'~' + to_string((int)device.angleEnd)).c_str());
+			fillrectangle(5, 5, textwidth(L"M - Show/Hide Measure") + 30, (textheight(' ') + 2)* (fps < 20 || shutDownGridnfoFrameCount > 0 ? 14 : 11) + 25);
+
+			outtextxy(17, (textheight(' ') + 2) * 0 + 15, L"I - Show/Hide Info");
+			outtextxy(17, (textheight(' ') + 2) * 1 + 15, L"P - Show/Hide Point");
+			outtextxy(17, (textheight(' ') + 2) * 2 + 15, L"L - Show/Hide Line");
+			outtextxy(17, (textheight(' ') + 2) * 3 + 15, L"A - Show/Hide Area");
+			outtextxy(17, (textheight(' ') + 2) * 4 + 15, L"U - Show/Hide UI");
+			outtextxy(17, (textheight(' ') + 2) * 5 + 15, L"G - Show/Hide Grid");
+			outtextxy(17, (textheight(' ') + 2) * 6 + 15, L"M - Show/Hide Measure");
+			outtextxy(17, (textheight(' ') + 2) * 7 + 15, L"R - Reset the view");
+			outtextxy(17, (textheight(' ') + 2) * 8 + 15, (LimDevice::tstring(L"Scale: ") + to_tstring(scale)).c_str());
+			outtextxy(17, (textheight(' ') + 2) * 9 + 15, (LimDevice::tstring(L"Angle: ") + to_tstring((int)device.angleBeg) + L'~' + to_tstring((int)device.angleEnd)).c_str());
+
+			outtextxy(17, (textheight(' ') + 2) * 10 + 15, (LimDevice::tstring(L"FPS: ") + to_tstring(fps)).c_str());
+			
+			if (fps < 5)
+			{
+				bIfGrid = false;
+				shutDownGridnfoFrameCount = 500;
+			}
+			if (shutDownGridnfoFrameCount > 0)
+			{
+				--shutDownGridnfoFrameCount;
+				RECT rt{ 17,(textheight(' ') + 2) * 11 + 15 ,textwidth(L"M - Show/Hide Measure") + 22 ,(textheight(' ') + 2) * 14 + 25 };
+				settextcolor(RED);
+				drawtext(L"The fps is lower than 5, grid drawing has been turned off automatically", &rt, DT_LEFT | DT_WORDBREAK);
+				settextcolor(BLACK);
+			}
+			else if (fps < 20)
+			{
+				RECT rt{ 17,(textheight(' ') + 2) * 11 + 15 ,textwidth(L"M - Show/Hide Measure") + 22 ,(textheight(' ') + 2) * 14 + 25 };
+				settextcolor(RED);
+				drawtext(L"The fps is lower than 20, recommend to turn off grid drawing by 'G'.", &rt, DT_LEFT | DT_WORDBREAK);
+				settextcolor(BLACK);
+			}
+
+
+			if (Msg.mkRButton)
+			{
+				setlinestyle(PS_SOLID, 1);
+				setlinecolor(YELLOW);
+				line(originPos.x, originPos.y, Msg.x, Msg.y);
+				outtextxy(Msg.x, Msg.y + 30, (to_tstring(sqrt((Msg.x - originPos.x)* (Msg.x - originPos.x) + (Msg.y - originPos.y) * (Msg.y - originPos.y)) / scale / 100) + LimDevice::tstring(L"m")).c_str());
+				outtextxy(Msg.x, Msg.y + 60, (to_tstring(atan2(Msg.y - originPos.y, -Msg.x + originPos.x) * 180 / LimDevice::pi + 180) + LimDevice::tstring(L"бу")).c_str());
+			}
 
 			setlinestyle(PS_SOLID, 1);
 			setaspectratio(scale, scale);
@@ -223,7 +323,7 @@ int main()
 		FlushBatchDraw();
 
 		using namespace std::chrono;
-		std::this_thread::sleep_for(100ms);
+		std::this_thread::sleep_for(5ms);
 	}
 
 closeJmp:

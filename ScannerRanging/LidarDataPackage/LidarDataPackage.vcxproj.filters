@@ -33,9 +33,6 @@
     <ClCompile Include="LidarDataPackage.cpp">
       <Filter>Library\LidarDataPackage</Filter>
     </ClCompile>
-    <ClCompile Include="LimDevice.cpp">
-      <Filter>Library\LidarDataPackage</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -53,6 +50,12 @@
     <ClInclude Include="LimDevice.h">
       <Filter>Library\LidarDataPackage</Filter>
     </ClInclude>
+    <ClInclude Include="fps.h">
+      <Filter>Library</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="EquipmentComm\EquipmentComm.lib">
@@ -63,5 +66,15 @@
     <None Include="EquipmentComm\EquipmentComm.dll">
       <Filter>Library\EquipmentComm</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LidarDataPackage.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\Resources\Ranging.ico">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>
