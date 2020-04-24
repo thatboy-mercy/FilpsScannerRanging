@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LIMTest", "LIMTest\LIMTest.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TryLIM", "TryLIM\TryLIM.vcxproj", "{42CE6F91-CC63-46BC-B8D0-8526CECA6405}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LidarDataPackage", "LidarDataPackage\LidarDataPackage.vcxproj", "{5192E187-8883-41A9-959B-D2A50518E02C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -29,6 +31,14 @@ Global
 		{42CE6F91-CC63-46BC-B8D0-8526CECA6405}.Release|x64.ActiveCfg = Release|Win32
 		{42CE6F91-CC63-46BC-B8D0-8526CECA6405}.Release|x86.ActiveCfg = Release|Win32
 		{42CE6F91-CC63-46BC-B8D0-8526CECA6405}.Release|x86.Build.0 = Release|Win32
+		{5192E187-8883-41A9-959B-D2A50518E02C}.Debug|x64.ActiveCfg = Debug|x64
+		{5192E187-8883-41A9-959B-D2A50518E02C}.Debug|x64.Build.0 = Debug|x64
+		{5192E187-8883-41A9-959B-D2A50518E02C}.Debug|x86.ActiveCfg = Debug|Win32
+		{5192E187-8883-41A9-959B-D2A50518E02C}.Debug|x86.Build.0 = Debug|Win32
+		{5192E187-8883-41A9-959B-D2A50518E02C}.Release|x64.ActiveCfg = Release|x64
+		{5192E187-8883-41A9-959B-D2A50518E02C}.Release|x64.Build.0 = Release|x64
+		{5192E187-8883-41A9-959B-D2A50518E02C}.Release|x86.ActiveCfg = Release|Win32
+		{5192E187-8883-41A9-959B-D2A50518E02C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

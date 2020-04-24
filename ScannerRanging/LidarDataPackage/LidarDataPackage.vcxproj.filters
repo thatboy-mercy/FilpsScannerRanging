@@ -13,45 +13,55 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="EquipmentComm">
-      <UniqueIdentifier>{30d161d2-e9b4-428f-b60a-2eac7bb7d9ca}</UniqueIdentifier>
+    <Filter Include="Library">
+      <UniqueIdentifier>{7c1b04a3-6868-4e63-a094-f8c6e358f258}</UniqueIdentifier>
     </Filter>
-    <Filter Include="LIM">
-      <UniqueIdentifier>{21564174-8171-42f9-a28d-67b248f5eefe}</UniqueIdentifier>
+    <Filter Include="Library\EquipmentComm">
+      <UniqueIdentifier>{8e5ab60f-c3ba-46a4-8917-88fde76f3b51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\LIM">
+      <UniqueIdentifier>{c27787b3-d5be-4e55-95af-9dd349f4d780}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\LidarDataPackage">
+      <UniqueIdentifier>{77339ca9-43df-4bd8-a801-cba493c4cabe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LIM\lim.cpp">
-      <Filter>LIM</Filter>
+      <Filter>Library\LIM</Filter>
     </ClCompile>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="LidarDataPackage.cpp">
+      <Filter>Library\LidarDataPackage</Filter>
+    </ClCompile>
+    <ClCompile Include="LimDevice.cpp">
+      <Filter>Library\LidarDataPackage</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LIM\lim.h">
-      <Filter>LIM</Filter>
+      <Filter>Library\LIM</Filter>
     </ClInclude>
     <ClInclude Include="EquipmentComm\EquipmentComm.h">
-      <Filter>EquipmentComm</Filter>
+      <Filter>Library\EquipmentComm</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="LidarDataPackage.h">
+      <Filter>Library\LidarDataPackage</Filter>
+    </ClInclude>
+    <ClInclude Include="LimDevice.h">
+      <Filter>Library\LidarDataPackage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="EquipmentComm\EquipmentComm.lib">
-      <Filter>EquipmentComm</Filter>
+      <Filter>Library\EquipmentComm</Filter>
     </Library>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="LIMTest.rc">
-      <Filter>资源文件</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\..\Resources\Ranging.ico">
-      <Filter>资源文件</Filter>
-    </Image>
+    <None Include="EquipmentComm\EquipmentComm.dll">
+      <Filter>Library\EquipmentComm</Filter>
+    </None>
   </ItemGroup>
 </Project>

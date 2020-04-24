@@ -48,6 +48,7 @@ namespace lim
 	};
 
 	std::mutex coordLock;
+	size_t coordUseSize = 541;
 	size_t coordSize = 541;
 	POINT drawCoord[542] = { NULL };
 	PolarCoord polarCoord[541];
@@ -57,15 +58,19 @@ namespace lim
 	void calcRectaCoord()
 	{
 		coordLock.lock();
+
+		int currentSize = 0;
 		for (int i = 0; i< coordSize;++i)
 		{
 			if (polarCoord[i].length > 900)
-				polarCoord[i].length = i > 0 ? polarCoord[i - 1].length : 0;
-			rectaCoord[i].x = polarCoord[i].length * cos(polarCoord[i].angle / 180 * pi);
-			rectaCoord[i].y = polarCoord[i].length * sin(polarCoord[i].angle / 180 * pi);
-			drawCoord[i].x = rectaCoord[i].x;
-			drawCoord[i].y = -rectaCoord[i].y;
+				continue;
+			rectaCoord[currentSize].x = polarCoord[i].length * cos(polarCoord[i].angle / 180 * pi);
+			rectaCoord[currentSize].y = polarCoord[i].length * sin(polarCoord[i].angle / 180 * pi);
+			drawCoord[currentSize].x = rectaCoord[currentSize].x;
+			drawCoord[currentSize].y = -rectaCoord[currentSize].y;
+			currentSize++;
 		}
+		coordUseSize = currentSize;
 		coordLock.unlock();
 	}
 
@@ -310,16 +315,19 @@ int main()
 			setlinecolor(0X00F000);
 			setfillcolor(0XF37E31);
 			if (bIfArea && !bIfLine)
-				solidpolygon(lim::drawCoord, lim::coordSize + 1);
+				solidpolygon(lim::drawCoord, lim::coordUseSize + 1);
 			else if (!bIfArea && bIfLine)
-				polygon(lim::drawCoord, lim::coordSize + 1);
+				polygon(lim::drawCoord, lim::coordUseSize + 1);
 			else if (bIfArea && bIfLine)
-				fillpolygon(lim::drawCoord, lim::coordSize + 1);
+				fillpolygon(lim::drawCoord, lim::coordUseSize + 1);
 		}
+		// 中心点
+		setfillcolor(RGB(0XF0, 0, 0));
+		solidcircle(0, 0, 3);
 		if (bIfPoint)
 		{
 			setfillcolor(RGB(0, 0, 0X80));
-			for (size_t i = 0; i < lim::coordSize; i++)
+			for (size_t i = 0; i < lim::coordUseSize; i++)
 				solidcircle(lim::rectaCoord[i].x, -lim::rectaCoord[i].y, 1);
 		}
 		if (bIfMeasure)
@@ -341,11 +349,6 @@ int main()
 			TEXT_ARC(100);
 #undef TEXT_ARC
 		}
-
-		// 中心点
-		setfillcolor(RGB(0XF0, 0, 0));
-		solidcircle(0, 0, 3);
-
 		if (bIfInfo)
 		{
 			setorigin(0, 0);
@@ -368,7 +371,6 @@ int main()
 			setaspectratio(scale, scale);
 			setorigin(originPos.x, originPos.y);
 		}
-
 
 		FlushBatchDraw();
 		std::this_thread::sleep_for(100ms);
