@@ -144,9 +144,16 @@
   <ItemGroup>
     <ClInclude Include="EquipmentComm\EquipmentComm.h" />
     <ClInclude Include="LIM\lim.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="EquipmentComm\EquipmentComm.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LIMTest.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\Resources\Ranging.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
