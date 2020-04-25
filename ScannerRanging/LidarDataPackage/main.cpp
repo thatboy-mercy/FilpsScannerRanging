@@ -3,8 +3,6 @@
 #include <conio.h>
 #include "fps.h"
 
-#include <easyx.h>
-
 namespace thatboy
 {
 	namespace EasyX
@@ -14,6 +12,9 @@ namespace thatboy
 		{
 			EW_HASMAXIMIZI = 0X10    // Enable the maximize button
 			, EW_HASSIZEBOX = 0X20   // Enable the sizebox
+			, EW_SWITCHUSKEBOARD = 0X40
+
+			, EW_EXALLPROP = EW_HASMAXIMIZI | EW_HASSIZEBOX | EW_SWITCHUSKEBOARD
 		};
 
 		// 
@@ -37,7 +38,9 @@ namespace thatboy
 
 		HWND initgraph(int width, int height, int flag = NULL)	// Initialize the graphics environment.
 		{
-			HWND hEasyX = ::initgraph(width, height, flag & ~(EW_HASMAXIMIZI | EW_HASSIZEBOX));
+			HWND hEasyX = ::initgraph(width, height, flag & ~EW_EXALLPROP);
+			if (flag & EW_SWITCHUSKEBOARD)
+				LoadKeyboardLayout(TEXT("0x0409"), KLF_ACTIVATE | KLF_SETFORPROCESS);
 			_DataPackage::OLD_EasyXProc = reinterpret_cast<_DataPackage::CallBackType*>(GetWindowLong(hEasyX, GWL_WNDPROC));
 			SetWindowLong(hEasyX, GWL_WNDPROC, reinterpret_cast<LONG>(_DataPackage::WndProc));
 			SetWindowLong(hEasyX, GWL_STYLE, GetWindowLong(hEasyX, GWL_STYLE) | (flag & EW_HASMAXIMIZI ? WS_MAXIMIZEBOX : 0) | (flag & EW_HASSIZEBOX ? WS_SIZEBOX : 0));
@@ -55,7 +58,7 @@ int main()
 	LimDevice::WaitFirstDeviceConnected();
 	LimDevice::StartLMDData();
 
-	EasyX::initgraph(900, 900, EasyX::EW_HASMAXIMIZI | EasyX::EW_HASSIZEBOX);
+	EasyX::initgraph(900, 900, EasyX::EW_EXALLPROP);
 	BeginBatchDraw();
 	setbkcolor(WHITE);
 	setlinestyle(PS_SOLID, 1);
@@ -82,7 +85,6 @@ int main()
 	setorigin(originPos.x, originPos.y);
 
 	FlushMouseMsgBuffer();
-
 	auto& device = LimDevice::DeviceList.begin()->second;
 	while (LimDevice::OnlineDeviceNumber > 0)
 	{
@@ -268,7 +270,7 @@ int main()
 			setlinecolor(0X252525);
 			setfillcolor(0XE0E0E0);
 
-			fillrectangle(5, 5, textwidth(L"M - Show/Hide Measure") + 30, (textheight(' ') + 2)* (fps < 20 || shutDownGridnfoFrameCount > 0 ? 14 : 11) + 25);
+			fillrectangle(5, 5, textwidth(L"M - Show/Hide Measure") + 30, (textheight(' ') + 2) * (fps < 20 || shutDownGridnfoFrameCount > 0 ? 14 : 11) + 25);
 
 			outtextxy(17, (textheight(' ') + 2) * 0 + 15, L"I - Show/Hide Info");
 			outtextxy(17, (textheight(' ') + 2) * 1 + 15, L"P - Show/Hide Point");
@@ -282,7 +284,7 @@ int main()
 			outtextxy(17, (textheight(' ') + 2) * 9 + 15, (LimDevice::tstring(L"Angle: ") + to_tstring((int)device.angleBeg) + L'~' + to_tstring((int)device.angleEnd)).c_str());
 
 			outtextxy(17, (textheight(' ') + 2) * 10 + 15, (LimDevice::tstring(L"FPS: ") + to_tstring(fps)).c_str());
-			
+
 			if (fps < 5)
 			{
 				bIfGrid = false;
@@ -310,7 +312,7 @@ int main()
 				setlinestyle(PS_SOLID, 1);
 				setlinecolor(YELLOW);
 				line(originPos.x, originPos.y, Msg.x, Msg.y);
-				outtextxy(Msg.x, Msg.y + 30, (to_tstring(sqrt((Msg.x - originPos.x)* (Msg.x - originPos.x) + (Msg.y - originPos.y) * (Msg.y - originPos.y)) / scale / 100) + LimDevice::tstring(L"m")).c_str());
+				outtextxy(Msg.x, Msg.y + 30, (to_tstring(sqrt((Msg.x - originPos.x) * (Msg.x - originPos.x) + (Msg.y - originPos.y) * (Msg.y - originPos.y)) / scale / 100) + LimDevice::tstring(L"m")).c_str());
 				outtextxy(Msg.x, Msg.y + 60, (to_tstring(atan2(Msg.y - originPos.y, -Msg.x + originPos.x) * 180 / LimDevice::pi + 180) + LimDevice::tstring(L"бу")).c_str());
 			}
 

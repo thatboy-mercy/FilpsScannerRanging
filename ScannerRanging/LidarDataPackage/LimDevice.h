@@ -55,7 +55,7 @@ public:
 	std::vector<RectaCoord> rectaCoord;
 
 	inline static std::mutex staticDataLock;
-	inline static size_t OnlineDeviceNumber = 0;
+	inline static int OnlineDeviceNumber = 0;
 	inline static int SerialCID = 0x80;
 	inline static bool hasDeviceTryConnected = false;
 	inline static std::map<int, LimDevice> DeviceList;
@@ -188,7 +188,10 @@ public:
 
 	static void CALLBACK onStateCallBack(int _cid, unsigned int _state_code, const char* _ip, int _port, int _paddr)
 	{
-		if (_state_code == EQCOMM_STATE_OK)
+
+		switch (_state_code)
+		{
+		case EQCOMM_STATE_OK:
 		{
 			LIM_HEAD* lim = NULL;
 			LIM_Pack(lim, _cid, LIM_CODE_GET_LDBCONFIG, NULL);
@@ -206,16 +209,17 @@ public:
 			DeviceList[_cid].isConnected = true;
 			DeviceList[_cid].cid = _cid;
 		}
-		else if (_state_code == EQCOMM_STATE_ERR)
-		{
-			DeviceList[_cid].isConnected = false;
-		}
-		else if (_state_code == EQCOMM_STATE_LOST)
-		{
-			DeviceList[_cid].isConnected = false;
+		break;
+		case EQCOMM_STATE_ERR:
+		case EQCOMM_STATE_LOST:
 			staticDataLock.lock();
+			if (DeviceList[_cid].isConnected)
+				DeviceList[_cid].isConnected = false;
 			--OnlineDeviceNumber;
 			staticDataLock.unlock();
+			break;
+		default:
+			break;
 		}
 		DeviceList[_cid].isTryConnected = true;
 		hasDeviceTryConnected = true;
