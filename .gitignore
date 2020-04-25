@@ -2,7 +2,6 @@
 # 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
 ################################################################################
 
-/ScannerRanging/desktop.ini
 /ScannerRanging/.vs/ScannerRanging/v16
 /ScannerRanging/LIMTest/Debug
 /ScannerRanging/LIMTest/Release
@@ -16,3 +15,4 @@
 /ScannerRanging/TryLIM/x64/Debug
 /ScannerRanging/LidarDataPackage/Debug
 /ScannerRanging/LidarDataPackage/Release
+desktop.ini
