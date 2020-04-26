@@ -192,7 +192,12 @@ namespace thatboy
 						infos[id]->argColor = color;
 				}
 
-				void drawInfo(int x, int y)
+				void drawInfo()const
+				{
+					drawInfo(x, y);
+				}
+
+				void drawInfo(int x, int y)const
 				{
 					float xs, ys;
 					getaspectratio(&xs, &ys);
@@ -205,7 +210,7 @@ namespace thatboy
 
 					y += 5;
 
-					for (const auto& info : drawList) 
+					for (const auto& info : drawList)
 					{
 						if (!info->show)
 							continue;
@@ -227,6 +232,19 @@ namespace thatboy
 					}
 					setaspectratio(xs, ys);
 				}
+
+				int getInfoBoxWidth()const
+				{
+					return boxWidth;
+				}
+
+				int getInfoBoxHeight()const
+				{
+					return boxHeight;
+				}
+
+				mutable int x;
+				mutable int y;
 			protected:
 				int lineWidth = 4;
 				COLORREF lineColor = 0X252525;
@@ -234,12 +252,12 @@ namespace thatboy
 
 				int maxInfoWidth = 0;
 				int maxArgWidth = 0;
-				int textWidth;
-				int textHeight;
-				int argBegin;
-				int infoBegin;
-				int boxWidth;
-				int boxHeight;
+				int textWidth = 0;
+				int textHeight = 0;
+				int argBegin = 0;
+				int infoBegin = 0;
+				int boxWidth = 0;
+				int boxHeight = 0;
 				std::vector<std::shared_ptr<_info>> drawList;
 				std::map<string, std::shared_ptr<_info>> infos;
 			};

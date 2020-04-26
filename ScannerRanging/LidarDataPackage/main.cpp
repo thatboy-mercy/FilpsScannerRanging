@@ -1,8 +1,11 @@
-#include "LimDevice.h"
-#include "fps.h"
+#include <httplib.h>
+
+#include "../LidarDataPackage/LimDevice.h"
+#include "../LidarDataPackage/fps.h"
+#include "../LidarDataPackage/EasyPX.h"
+
 #include <conio.h>
 
-#include "EasyPX.h"
 
 int main()
 {
@@ -27,6 +30,7 @@ int main()
 	bool bIfGrid = true;
 	bool bIfArea = true;
 	bool bIfFixed = true;
+	bool bIfFromInfoBox = false;
 
 	MOUSEMSG Msg = { NULL };
 	POINT mousePos = { NULL };
@@ -47,9 +51,10 @@ int main()
 	infoBox.addInfo("A", "A - Area");
 	infoBox.addInfo("B", "B - Background");
 	infoBox.addInfo("G", "G - Grid");
-	infoBox.addInfo("M", "M -Measure");
-	infoBox.addInfo("S", "S - Set the Info");
+	infoBox.addInfo("M", "M - Measure");
+	infoBox.addInfo("F", "F - Fix the Info");
 	infoBox.addInfo("R", "R - Reset the view");
+	infoBox.addInfo(" ", " ");
 	infoBox.addInfo("Scale", "Scale:");
 	infoBox.addInfo("Angle", "Angle:");
 	infoBox.addInfo("FPS", "FPS:");
@@ -76,7 +81,7 @@ int main()
 	infoBox.setArg("G", "Show");
 	infoBox.setArg("M", "Show");
 
-	infoBox.setArgColor("S", GREEN);
+	infoBox.setArgColor("F", GREEN);
 	infoBox.setArgColor("I", GREEN);
 	infoBox.setArgColor("P", GREEN);
 	infoBox.setArgColor("L", GREEN);
@@ -88,6 +93,9 @@ int main()
 	auto& device = LimDevice::DeviceList.begin()->second;
 	infoBox.setArg("Angle", to_string((int)device.angleBeg) + '~' + to_string((int)device.angleEnd));
 	infoBox.setArg("Len", device.borderContinusLen);
+
+	infoBox.x = 10;
+	infoBox.y = 10;
 
 	FlushMouseMsgBuffer();
 	while (LimDevice::OnlineDeviceNumber > 0)
@@ -138,16 +146,27 @@ int main()
 				}
 				if (Msg.uMsg == WM_LBUTTONDOWN || Msg.uMsg == WM_RBUTTONDOWN)
 				{
+					bIfFromInfoBox = !bIfFixed && (Msg.x > infoBox.x + originPos.x && Msg.y > infoBox.y + originPos.y && Msg.x < infoBox.x + originPos.x + infoBox.getInfoBoxWidth() && Msg.y < infoBox.y + originPos.y + infoBox.getInfoBoxHeight());
 					mousePos.x = Msg.x;
 					mousePos.y = Msg.y;
 				}
 				if (Msg.mkLButton)
 				{
-					originPos.x += Msg.x - mousePos.x;
-					originPos.y += Msg.y - mousePos.y;
-					mousePos.x = Msg.x;
-					mousePos.y = Msg.y;
-					bIfOriChanged = true;
+					if (bIfFromInfoBox)
+					{
+						infoBox.x += Msg.x - mousePos.x;
+						infoBox.y += Msg.y - mousePos.y;
+						mousePos.x = Msg.x;
+						mousePos.y = Msg.y;
+					}
+					else
+					{
+						originPos.x += Msg.x - mousePos.x;
+						originPos.y += Msg.y - mousePos.y;
+						mousePos.x = Msg.x;
+						mousePos.y = Msg.y;
+						bIfOriChanged = true;
+					}
 				}
 			}
 			if (bIfScaleChanged)
@@ -195,8 +214,18 @@ int main()
 			case 'f':
 			case 'F':
 				bIfFixed = !bIfFixed;
-				infoBox.setArg("F", bIfFixed ? "Fixed" : "Unfixed");
+				infoBox.setArg("F", bIfFixed ? "Fixed" : "Unfixed", true);
 				infoBox.setArgColor("F", bIfFixed ? GREEN : RED);
+				if (bIfFixed)
+				{
+					infoBox.x += originPos.x;
+					infoBox.y += originPos.y;
+				}
+				else
+				{
+					infoBox.x -= originPos.x;
+					infoBox.y -= originPos.y;
+				}
 				break;
 			case 'g':
 			case 'G':
@@ -340,15 +369,9 @@ int main()
 				}
 			}
 			if (bIfFixed)
-			{
-				setorigin(0, 0);
-				infoBox.drawInfo(10, 10);
-				setorigin(originPos.x, originPos.y);
-			}
+				infoBox.drawInfo(infoBox.x - originPos.x, infoBox.y - originPos.y);
 			else
-			{
-				infoBox.drawInfo(-80, 100);
-			}
+				infoBox.drawInfo();
 			if (Msg.mkRButton)
 			{
 				setorigin(0, 0);
@@ -368,7 +391,6 @@ int main()
 			}
 
 		}
-
 
 		FlushBatchDraw();
 

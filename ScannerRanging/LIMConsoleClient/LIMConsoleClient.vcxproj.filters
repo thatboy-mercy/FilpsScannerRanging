@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Library">
+      <UniqueIdentifier>{fdb31581-25ca-4fb8-941f-dd6d00fc59e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\EquipmentComm">
+      <UniqueIdentifier>{03a66bbb-0237-4835-a4f0-d35df9eeb69d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\LidarDataPackage">
+      <UniqueIdentifier>{901f362f-d920-40e6-a258-bc820411a48e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\LIM">
+      <UniqueIdentifier>{746f1660-d8aa-410b-994c-2bcf6324fc5b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\LidarDataPackage\EquipmentComm\EquipmentComm.h">
+      <Filter>Library\EquipmentComm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LidarDataPackage\LidarDataPackage.h">
+      <Filter>Library\LidarDataPackage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LidarDataPackage\LimDevice.h">
+      <Filter>Library\LidarDataPackage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LidarDataPackage\LIM\lim.h">
+      <Filter>Library\LIM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LidarDataPackage\fps.h">
+      <Filter>Library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LidarDataPackage\EasyPX.h">
+      <Filter>Library</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\LidarDataPackage\EquipmentComm\EquipmentComm.lib">
+      <Filter>Library\EquipmentComm</Filter>
+    </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\LidarDataPackage\EquipmentComm\EquipmentComm.dll">
+      <Filter>Library\EquipmentComm</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\LidarDataPackage\LidarDataPackage.cpp">
+      <Filter>Library\LidarDataPackage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LidarDataPackage\LIM\lim.cpp">
+      <Filter>Library\LIM</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

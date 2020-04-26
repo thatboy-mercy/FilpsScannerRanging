@@ -8,6 +8,7 @@
 #include <map>
 #include <atomic>
 #include <vector>
+#include <algorithm>
 
 #include "EquipmentComm/EquipmentComm.h"
 #include "LIM/lim.h"
@@ -47,10 +48,6 @@ public:
 	double angleEnd = 225;
 	double borderContinusLen = 100;
 	size_t BorderLeastNumber = 3;
-
-	int cid = 0XFFFFFFF;
-
-	std::mutex coordLock;
 
 	std::vector<POINT> drawPolyCoord;
 	std::vector<PolarCoord> polarCoord;
@@ -105,6 +102,8 @@ public:
 	}
 
 protected:
+	std::mutex coordLock;
+	int cid = 0XFFFFFFF;
 
 	void calcRectaCoord()
 	{
@@ -129,7 +128,6 @@ protected:
 			rectaCoord.resize(indexWrite);
 			drawPolyCoord.resize(indexWrite + 1);
 		}
-
 		// Border
 		double borderContinusLen2 = borderContinusLen * borderContinusLen;
 		borderStore.clear();
