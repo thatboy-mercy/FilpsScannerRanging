@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LIMTest", "LIMTest\LIMTest.vcxproj", "{00AE6CB6-8583-4E3D-B9EE-2CD15568ACE1}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TryLIM", "TryLIM\TryLIM.vcxproj", "{42CE6F91-CC63-46BC-B8D0-8526CECA6405}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LidarDataPackage", "LidarDataPackage\LidarDataPackage.vcxproj", "{5192E187-8883-41A9-959B-D2A50518E02C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LIMConsoleClient", "LIMConsoleClient\LIMConsoleClient.vcxproj", "{115E8ECB-B9C9-416C-9C71-1F88F0E0A8ED}"
@@ -19,20 +15,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{00AE6CB6-8583-4E3D-B9EE-2CD15568ACE1}.Debug|x64.ActiveCfg = Debug|x64
-		{00AE6CB6-8583-4E3D-B9EE-2CD15568ACE1}.Debug|x64.Build.0 = Debug|x64
-		{00AE6CB6-8583-4E3D-B9EE-2CD15568ACE1}.Debug|x86.ActiveCfg = Debug|Win32
-		{00AE6CB6-8583-4E3D-B9EE-2CD15568ACE1}.Debug|x86.Build.0 = Debug|Win32
-		{00AE6CB6-8583-4E3D-B9EE-2CD15568ACE1}.Release|x64.ActiveCfg = Release|x64
-		{00AE6CB6-8583-4E3D-B9EE-2CD15568ACE1}.Release|x64.Build.0 = Release|x64
-		{00AE6CB6-8583-4E3D-B9EE-2CD15568ACE1}.Release|x86.ActiveCfg = Release|Win32
-		{00AE6CB6-8583-4E3D-B9EE-2CD15568ACE1}.Release|x86.Build.0 = Release|Win32
-		{42CE6F91-CC63-46BC-B8D0-8526CECA6405}.Debug|x64.ActiveCfg = Debug|Win32
-		{42CE6F91-CC63-46BC-B8D0-8526CECA6405}.Debug|x86.ActiveCfg = Debug|Win32
-		{42CE6F91-CC63-46BC-B8D0-8526CECA6405}.Debug|x86.Build.0 = Debug|Win32
-		{42CE6F91-CC63-46BC-B8D0-8526CECA6405}.Release|x64.ActiveCfg = Release|Win32
-		{42CE6F91-CC63-46BC-B8D0-8526CECA6405}.Release|x86.ActiveCfg = Release|Win32
-		{42CE6F91-CC63-46BC-B8D0-8526CECA6405}.Release|x86.Build.0 = Release|Win32
 		{5192E187-8883-41A9-959B-D2A50518E02C}.Debug|x64.ActiveCfg = Debug|x64
 		{5192E187-8883-41A9-959B-D2A50518E02C}.Debug|x64.Build.0 = Debug|x64
 		{5192E187-8883-41A9-959B-D2A50518E02C}.Debug|x86.ActiveCfg = Debug|Win32
