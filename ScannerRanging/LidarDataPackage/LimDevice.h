@@ -77,12 +77,13 @@ public:
 	{
 		EquipmentCommInit(NULL, onDataCallBack, onStateCallBack); // 初始化设备库
 	}
-	static void OpenEquipment(LPCSTR ip, int port = LIM_USER_PORT)
+	static int OpenEquipment(LPCSTR ip, int port = LIM_USER_PORT)
 	{
 		OpenEquipmentComm(SerialCID, ip, port);
 		staticDataLock.lock();
 		++SerialCID;
 		staticDataLock.unlock();
+		return SerialCID - 1;
 	}
 	static void WaitFirstDeviceTryConnected()
 	{

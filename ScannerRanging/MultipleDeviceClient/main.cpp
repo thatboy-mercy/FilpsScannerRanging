@@ -7,29 +7,6 @@
 #include <conio.h>
 #include "../LidarDataPackage/LimDevice.h"
 
-#ifdef _DEBUG
-
-
-#include <iostream>
-void log()
-{
-	std::cout << std::endl;
-}
-
-
-template<typename T, typename ...Types>
-void log(T v, Types... args)
-{
-	std::cout << v << ' ';
-	log(args...);
-}
-
-#else
-#define log
-#endif // _DEBUG
-
-
-
 using json = nlohmann::json;
 using Server = httplib::Server;
 using Request = httplib::Request;
@@ -37,7 +14,6 @@ using Response = httplib::Response;
 
 constexpr int limServerPort = 5056;
 Server server;
-
 
 template<typename T>
 std::string fmtString(T in, int width = 0, int prec = 0) {
@@ -53,7 +29,7 @@ void getPosition(const Request& req, Response& res)
 	if (!req.has_param("cid"))
 	{
 		param["error"] = "Invalid parameter: no cid given.";
-		res.set_content(param.dump(), "text/json");
+		res.set_content(param.dump(), "application/json");
 		return;
 	}
 	auto cid = std::stoi(req.get_param_value("cid"));
@@ -65,7 +41,7 @@ void getPosition(const Request& req, Response& res)
 	param["ip"] = device.deviceIP;
 	if (!device.isConnected)
 	{
-		res.set_content(param.dump(), "text/json");
+		res.set_content(param.dump(), "application/json");
 		return;
 	}
 
@@ -159,43 +135,33 @@ void getPosition(const Request& req, Response& res)
 			}
 		}
 	}
-	res.set_content(param.dump(), "text/json");
+	res.set_content(param.dump(), "application/json");
 }
 
 void connectDevice(const Request& req, Response& res)
 {
 	if (!req.has_param("ip"))
-	{
-		res.set_content("{\"error\": \"Invalid parameter IP\"}"_json.dump(), "text/json");
-		return;
-	}
+		return res.set_content(R"({"error": "Invalid parameter IP"})"_json.dump(), "application/json");
 	auto ip = req.get_param_value("ip");
 
-	for (auto& device : LimDevice::DeviceList)
-	{
-		if (device.second.deviceIP == ip && device.second.isConnected)
-		{
-			res.set_content("{\"error\": \"Device is online\"}"_json.dump(), "text/json");
-			return;
-		}
-	}
+	for (auto& [cid, device]: LimDevice::DeviceList)
+		if (device.deviceIP == ip && device.isConnected)
+			return res.set_content(R"({"error": "Device is online"})"_json.dump(), "application/json");
 
-	LimDevice::OpenEquipment(ip.c_str()/*"192.168.1.210"*/);
+	auto cid = LimDevice::OpenEquipment(ip.c_str()/*"192.168.1.210"*/);
 	LimDevice::WaitFirstDeviceTryConnected();
 	LimDevice::StartLMDData();
 
 	json body;
 	body["info"] = "Tried to connect device " + req.get_param_value("ip");
-	res.set_content(body.dump(), "text/json");
+	res.set_content(body.dump(), "application/json");
 }
 
 void getDeviceInfo(const Request& req, Response& res)
 {
 	json param;
 	if (req.has_param("online_number"))
-	{
 		param["online_number"] = LimDevice::OnlineDeviceNumber;
-	}
 	if (req.has_param("device_list"))
 	{
 		json deviceListParam;
@@ -207,7 +173,7 @@ void getDeviceInfo(const Request& req, Response& res)
 			param["device_list"].push_back(deviceListParam);
 		}
 	}
-	res.set_content(param.dump(), "text/json");
+	res.set_content(param.dump(), "application/json");
 }
 
 int main()
@@ -217,6 +183,17 @@ int main()
 	server.bind_to_port("localhost", limServerPort);
 	server.set_mount_point("/", ".");
 
+	/*
+	/distance
+	/height
+	/set
+	/coord
+	/info
+	/connect
+	/disconnect
+	/shutdown
+	/quit
+	*/
 
 	server.Get("/lidar/position", getPosition);
 	server.Get("/lidar/connect", connectDevice);
