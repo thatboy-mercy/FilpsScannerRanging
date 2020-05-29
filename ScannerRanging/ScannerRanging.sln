@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server\Server.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LidarHeightTestDialog", "LidarHeightTestDialog\LidarHeightTestDialog.vcxproj", "{546BC298-717B-40D2-8D7F-CF76863F6DD9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NewDraw", "NewDraw\NewDraw.vcxproj", "{FAAAEEB0-AAC1-4808-B896-950B132EC0CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -91,6 +93,14 @@ Global
 		{546BC298-717B-40D2-8D7F-CF76863F6DD9}.Release|x64.Build.0 = Release|x64
 		{546BC298-717B-40D2-8D7F-CF76863F6DD9}.Release|x86.ActiveCfg = Release|Win32
 		{546BC298-717B-40D2-8D7F-CF76863F6DD9}.Release|x86.Build.0 = Release|Win32
+		{FAAAEEB0-AAC1-4808-B896-950B132EC0CA}.Debug|x64.ActiveCfg = Debug|x64
+		{FAAAEEB0-AAC1-4808-B896-950B132EC0CA}.Debug|x64.Build.0 = Debug|x64
+		{FAAAEEB0-AAC1-4808-B896-950B132EC0CA}.Debug|x86.ActiveCfg = Debug|Win32
+		{FAAAEEB0-AAC1-4808-B896-950B132EC0CA}.Debug|x86.Build.0 = Debug|Win32
+		{FAAAEEB0-AAC1-4808-B896-950B132EC0CA}.Release|x64.ActiveCfg = Release|x64
+		{FAAAEEB0-AAC1-4808-B896-950B132EC0CA}.Release|x64.Build.0 = Release|x64
+		{FAAAEEB0-AAC1-4808-B896-950B132EC0CA}.Release|x86.ActiveCfg = Release|Win32
+		{FAAAEEB0-AAC1-4808-B896-950B132EC0CA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,28 @@
+﻿  源.cpp
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\VirtualPostClient\LidarDevice.h(45,26): warning C4244: “return”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\VirtualPostClient\CoordTrans.h(39,26): warning C4244: “return”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(128,20): warning C4305: “*=”: 从“double”到“float”截断
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(138,20): warning C4305: “*=”: 从“double”到“float”截断
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(143,25): warning C4305: “=”: 从“double”到“float”截断
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(334,41): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(334,37): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(337,17): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(337,14): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(344,41): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(344,37): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(347,17): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(347,14): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(357,95): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(357,31): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(365,13): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(366,13): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(387,4): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(388,4): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(389,4): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(390,4): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(391,4): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(392,4): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(393,4): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(394,4): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\NewDraw\源.cpp(395,4): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+  NewDraw.vcxproj -> D:\VisualStudioSolution\FilpsScannerRanging\ScannerRanging\Debug\NewDraw.exe

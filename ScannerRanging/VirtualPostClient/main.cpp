@@ -5,7 +5,7 @@
 #include <iostream>
 #include <conio.h>
 #include <cmath>
-#include "../MultipleDeviceClient/LimDevice.h"
+#include "CoordTrans.h"
 
 
 using json = nlohmann::json;
@@ -25,66 +25,64 @@ void getDisconnect(const Request& req, Response& res);
 
 int main()
 {
-	LimDevice::InitEquipment();
-	LimDevice::OpenEquipment("192.168.31.210");
-	LimDevice::OpenEquipment("192.168.31.202");
-	LimDevice::WaitFirstDeviceTryConnected();
+	LidarDevice::InitEquipment();
+	LidarDevice::OpenEquipment("192.168.31.210");
+	LidarDevice::OpenEquipment("192.168.31.202");
+	LidarDevice::WaitFirstDeviceTryConnected();
 
-	while (LimDevice::OnlineDeviceNumber < 2)
+	while (LidarDevice::OnlineDeviceNumber < 2)
 		std::this_thread::sleep_for(10ms);
-	LimDevice::StartLMDData();
-	Client client("192.168.152.128", 9090);
+	LidarDevice::StartLMDData();
+	Client client("192.168.241.128", 9090);
 
-	auto& deviceMap = LimDevice::DeviceList[128];
-	auto& deviceDst = LimDevice::DeviceList[129];
+	auto& deviceMap = LidarDevice::DeviceList[128];
+	auto& deviceDst = LidarDevice::DeviceList[129];
+	CoordTrans coord;
 
 	while (true)
 	{
-		//constexpr int Y_STEP = 50;
-		//constexpr int X_STEP = 50;
-		//constexpr int X_NUM = 60;
-		//constexpr int Y_NUM = 180;
 		constexpr int DEBUG_SCALE = 10;
 		constexpr int Y_STEP = 5;
 		constexpr int X_STEP = 5;
-		constexpr int H_MAX = 400;
-
+		
 		int distance = 0;
-
+		deviceMap.LockRawData();
+		coord.ProcessCoord(deviceMap.rawData);
+		deviceMap.UnlockRawData();
 
 		json body;
-		if (deviceMap.negHeightCoord.empty() || deviceDst.negHeightCoord.empty())
+		if (coord.hist.empty() || coord.hist.empty())
 		{
 			std::this_thread::sleep_for(50ms);
 			continue;
 		}
 
-		deviceDst.LockCoord();
-		auto Dst90 = std::find_if(deviceDst.negHeightCoord.begin(), deviceDst.negHeightCoord.end(), [](const LimDevice::StdCoord& coord) {return coord.x == 0; });
-		if (Dst90 == deviceDst.negHeightCoord.end())
-		{
-			std::this_thread::sleep_for(50ms);
-			continue;
-		}
-		else
-			distance = Dst90->y;
-		deviceDst.UnlockCoord();
+		if (int dst = deviceDst.getFacingDistance(); dst > 0)
+			distance = dst;
 
 
-		body["cid"] = LimDevice::DeviceList.begin()->first;
+		body["cid"] = LidarDevice::DeviceList.begin()->first;
 		// todo ·Å´ó¹ý
 		body["x"] = (distance + X_STEP / 2) / X_STEP * X_STEP * DEBUG_SCALE;
-		body["intime"] = std::chrono::system_clock::now().time_since_epoch().count();
+		body["intime"] = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
-		deviceMap.LockCoord();
-		int begin = ceil(deviceMap.negHeightCoord.front().x / (double)Y_STEP) * Y_STEP;
-		int end = floor(deviceMap.negHeightCoord.back().x / (double)Y_STEP) * Y_STEP;
+		
+		int begin = ceil(coord.beginY / (double)Y_STEP) * Y_STEP;
+		int end = floor(coord.endY / (double)Y_STEP) * Y_STEP;
 
-		for (int yPtr = begin; yPtr <= end; yPtr += Y_STEP)
-			body["h"].push_back(deviceMap.negHeightCoord[yPtr - deviceMap.negHeightCoord.front().x].y * DEBUG_SCALE);	// TODO
-		deviceMap.UnlockCoord();
-		body["begin"] = begin;
-		body["end"] = end;
+		for (int yPtr = begin; yPtr < end; yPtr += Y_STEP)
+			body["h"].push_back(coord.hist[yPtr - coord.beginY] * DEBUG_SCALE);	// TODO
+		
+		//body["begin"] = begin;
+		//body["end"] = end;
+
+		body["begin"] = -end;
+		body["end"] = -begin;
+
+		for (const auto& ¦Ñ : coord.rawData.¦Ñ)
+			body["raw"].push_back(¦Ñ);
+		body["angle_begin"] = coord.rawData.angleBeg;
+		body["angle_end"] = coord.rawData.angleEnd;
 
 		std::cout << body.dump() << std::endl;
 		client.Post("/map/col", body.dump(), "application/json");

@@ -15,14 +15,14 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="源.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VirtualPostClient\LidarDevice.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\LidarDataPackage\LIM\lim.cpp">
-      <Filter>头文件</Filter>
-    </ClCompile>
-    <ClCompile Include="LidarDevice.cpp">
-      <Filter>头文件</Filter>
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -36,10 +36,10 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LidarDevice.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="..\VirtualPostClient\LidarDevice.h">
+      <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="CoordTrans.h">
+    <ClInclude Include="..\VirtualPostClient\CoordTrans.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
