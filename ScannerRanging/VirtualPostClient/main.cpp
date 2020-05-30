@@ -25,6 +25,18 @@ void getDisconnect(const Request& req, Response& res);
 
 int main()
 {
+	// 配置
+	/*
+	data_device_ip
+	distance_device_ip
+
+	07
+	
+	
+	*/
+
+
+
 	LidarDevice::InitEquipment();
 	LidarDevice::OpenEquipment("192.168.31.210");
 	LidarDevice::OpenEquipment("192.168.31.202");
@@ -41,9 +53,14 @@ int main()
 
 	while (true)
 	{
+		//constexpr int Y_STEP = 50;
+		//constexpr int X_STEP = 50;
+		//constexpr int X_NUM = 60;
+		//constexpr int Y_NUM = 180;
 		constexpr int DEBUG_SCALE = 10;
 		constexpr int Y_STEP = 5;
 		constexpr int X_STEP = 5;
+		constexpr int H_MAX = 400;
 		
 		int distance = 0;
 		deviceMap.LockRawData();
@@ -67,17 +84,27 @@ int main()
 		body["intime"] = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
 		
-		int begin = ceil(coord.beginY / (double)Y_STEP) * Y_STEP;
-		int end = floor(coord.endY / (double)Y_STEP) * Y_STEP;
+		// 清理一下起始点
+		//int begin = ceil(coord.beginY / (double)Y_STEP) * Y_STEP;
+		//int end = floor(coord.endY / (double)Y_STEP) * Y_STEP;
+		int begin = coord.beginY;
+		int end = coord.endY;
 
-		for (int yPtr = begin; yPtr < end; yPtr += Y_STEP)
-			body["h"].push_back(coord.hist[yPtr - coord.beginY] * DEBUG_SCALE);	// TODO
+		// 发送完整连续数据
+		for (int yPtr = begin; yPtr < end; yPtr++)
+		{
+			for (size_t i = 0; i < DEBUG_SCALE; i++)
+			{
+				body["h"].push_back(coord.hist[yPtr - coord.beginY] * DEBUG_SCALE);	// TODO
+			}
+		}
+		body["h"].push_back(coord.hist[end - 1 - coord.beginY] * DEBUG_SCALE);	// TODO
 		
 		//body["begin"] = begin;
 		//body["end"] = end;
-
-		body["begin"] = -end;
-		body["end"] = -begin;
+		// 将负坐标系转换过来
+		body["begin"] = (begin + 250)* DEBUG_SCALE;
+		body["end"] = (end + 250)* DEBUG_SCALE;
 
 		for (const auto& ρ : coord.rawData.ρ)
 			body["raw"].push_back(ρ);
