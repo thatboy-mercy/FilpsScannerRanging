@@ -16,6 +16,8 @@ void CALLBACK onDataCallBack(INT _cid, UINT _lim_code, LPVOID _lim, INT _lim_len
 void CALLBACK onStateCallBack(INT _cid, UINT _state_code, LPCSTR _ip, INT _port, INT _paddr);
 bool waitDeviceOnline(int timeOutMs);
 
+
+
 int main()
 {
 	// 初始化并连接设备
