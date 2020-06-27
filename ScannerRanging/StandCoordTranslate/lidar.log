@@ -1,0 +1,15 @@
+2020-6-27 18:03:25  [INFO] Application started.
+2020-6-27 18:03:25  [INFO] Properties:  DataDevice<192.168.31.210> DistanceDevice<192.168.31.202> DataSendTimeSpan<600000> MapXAccuracy<192.168.31.202>
+2020-6-27 18:03:31  [FATAL] @"D:\ZhuGF\FilpsScannerRanging\ScannerRanging\StandCoordTranslate\main.cpp":main<69>: Connect Devices Failed!
+2020-6-27 18:08:42  [INFO] Application started.
+2020-6-27 18:08:42  [INFO] Properties:  DataDevice<192.168.31.210> DistanceDevice<192.168.31.202> DataSendTimeSpan<600000> DeviceConnectTimeOut<5000> MapXAccuracy<192.168.31.202>.
+2020-6-27 18:08:47  [FATAL] @"D:\ZhuGF\FilpsScannerRanging\ScannerRanging\StandCoordTranslate\main.cpp":main<71>: Failed to connect device. Timeout!
+2020-6-27 18:08:47  [INFO] Device Status: DataDevice Offline; DistanceDevice Offline.
+2020-6-27 18:16:07  [INFO] Application started.
+2020-6-27 18:16:07  [INFO] Properties:  DataDevice<192.168.31.210> DistanceDevice<192.168.31.202> DataSendTimeSpan<600000> DeviceConnectTimeOut<5000> MapXAccuracy<192.168.31.202>.
+2020-6-27 18:16:15  [FATAL] @"D:\ZhuGF\FilpsScannerRanging\ScannerRanging\StandCoordTranslate\main.cpp":main<70>: Failed to connect device. Timeout!
+2020-6-27 18:16:16  [INFO] Device Status: DataDevice Offline; DistanceDevice Offline.
+2020-6-27 18:16:20  [INFO] Devices on line.
+2020-6-27 19:06:08  [INFO] Application started.
+2020-6-27 19:06:08  [INFO] Properties:  DataDevice<192.168.31.210> DistanceDevice<192.168.31.202> DataSendTimeSpan<600000> DeviceConnectTimeOut<5000> MapXAccuracy<10>.
+2020-6-27 19:06:08  [INFO] Device library initialization complete.

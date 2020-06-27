@@ -33,7 +33,7 @@ public:
 	template<class T> bool ReadInto(T& out_var, const std::string& in_key) const;
 	template<class T>
 	bool ReadInto(T& out_var, const std::string& in_key, const T& in_value) const;
-	bool FileExist(std::string filename);
+	static bool FileExist(std::string filename);
 	void ReadFile(std::string filename, std::string delimiter = "=", std::string comment = "#");
 	void SaveFile(std::string filename);
 
