@@ -3,48 +3,18 @@
 
 #include <chrono>
 #include <httplib.h>
-#include "Config.h"
-#include "../LidarDataPackage/EquipmentComm/EquipmentComm.h"
-#include "../LidarDataPackage/LIM/lim.h"
-#include "../../../Logger/Logger/Logger.hpp"
 #include <json.hpp>
+#include "RadarMapping.hpp"
 
-enum { CID_DATA = 0XAA, CID_DISTANCE };
-bool dataDeviceOnline = false;
-bool distanceDeviceOnline = false;
-std::string dataDeviceIP;
-std::string distanceDeviceIP;
-clock_t dataSendTimeSpan;
-clock_t deviceConnectTimeOut;
-int mapXAccuracy;
-constexpr auto PropertiesFilePath = "Application.properties";
-thatboy::logger::FileLogger logger("lidar.log");
 
-std::string serverHost;
-std::string serverPath;
-int serverPort;
-// 数据
-std::vector<int> lidarPolar;
-int lidarBegin;
-int lidarEnd;
-int lidarX;
-std::mutex lidarPolarLock;
-std::mutex lidarXLock;
+#define LOG_INFO(...) Radar::logger.log(thatboy::logger::LogLevel::Info, ##__VA_ARGS__);
+#define LOG_WARNING(...) Radar::logger.log(thatboy::logger::LogLevel::Warning, "@\"", __FILE__, "\":", __FUNCTION__, "<", __LINE__, ">: ", ##__VA_ARGS__);
+#define LOG_ERROR(...) Radar::logger.log(thatboy::logger::LogLevel::Error, "@\"", __FILE__, "\":", __FUNCTION__, "<", __LINE__, ">: ", ##__VA_ARGS__);
+#define LOG_FATAL(...) Radar::logger.log(thatboy::logger::LogLevel::Fatal, "@\"", __FILE__, "\":", __FUNCTION__, "<", __LINE__, ">: ", ##__VA_ARGS__);
 
-#define LOG_INFO(...) logger.log(thatboy::logger::LogLevel::Info, ##__VA_ARGS__);
-#define LOG_WARNING(...) logger.log(thatboy::logger::LogLevel::Warning, "@\"", __FILE__, "\":", __FUNCTION__, "<", __LINE__, ">: ", ##__VA_ARGS__);
-#define LOG_ERROR(...) logger.log(thatboy::logger::LogLevel::Error, "@\"", __FILE__, "\":", __FUNCTION__, "<", __LINE__, ">: ", ##__VA_ARGS__);
-#define LOG_FATAL(...) logger.log(thatboy::logger::LogLevel::Fatal, "@\"", __FILE__, "\":", __FUNCTION__, "<", __LINE__, ">: ", ##__VA_ARGS__);
-
-void CALLBACK onDataCallBack(INT _cid, UINT _lim_code, LPVOID _lim, INT _lim_len, INT _paddr);
-void CALLBACK onStateCallBack(INT _cid, UINT _state_code, LPCSTR _ip, INT _port, INT _paddr);
-bool waitDevicesOnline(int timeOutMs);
-void startDevices();
-inline bool devicesOnline();
 
 int main()
 {
-	using thatboy::logger::LogLevel;
 	// 退出码
 	enum: int {
 		SUCCESS = 0
@@ -60,20 +30,7 @@ int main()
 	// 加载配置文件
 	try
 	{
-		std::string serverUrl;
-		Config cfg(PropertiesFilePath);
-		cfg.ReadInto(dataDeviceIP, "DataDeviceIp");
-		cfg.ReadInto(distanceDeviceIP, "DistanceDeviceIp");
-		cfg.ReadInto(dataSendTimeSpan, "DataSendTimeSpan");
-		cfg.ReadInto(deviceConnectTimeOut, "DeviceConnectTimeOut");
-		cfg.ReadInto(mapXAccuracy, "MapXAccuracy");
-		cfg.ReadInto(serverUrl, "ServerUrl");
-
-		auto postIpMark = serverUrl.find_first_of(':');
-		auto postPortMark = serverUrl.find_first_of('/');
-		serverHost = serverUrl.substr(0, postIpMark);
-		serverPath = serverUrl.substr(postPortMark);
-		serverPort = stoi(serverUrl.substr(postIpMark + 1, postPortMark));
+		Radar::loadProperites();
 	}
 	catch (Config::File_not_found e)
 	{
@@ -86,50 +43,50 @@ int main()
 		return KEY_NOTFOUND;
 	}
 	LOG_INFO("Properties: "
-		, " DataDevice<", dataDeviceIP
-		, "> DistanceDevice<", distanceDeviceIP
-		, "> DataSendTimeSpan<", dataSendTimeSpan
-		, "> DeviceConnectTimeOut<", deviceConnectTimeOut
-		, "> MapXAccuracy<", mapXAccuracy, ">.");
+		, " DataDevice<", Radar::dataDeviceIP
+		, "> DistanceDevice<", Radar::distanceDeviceIP
+		, "> DataSendTimeSpan<", Radar::dataSendTimeSpan
+		, "> DeviceConnectTimeOut<", Radar::deviceConnectTimeOut
+		, "> MapXAccuracy<", Radar::mapXAccuracy, ">.");
 
 	// 初始化并连接设备
-	if (!EquipmentCommInit(NULL, onDataCallBack, onStateCallBack))
+	if (!EquipmentCommInit(NULL, Radar::onDataCallBack, Radar::onStateCallBack))
 		return INIT_FAILED;
 	LOG_INFO("Device library initialization complete.");
-	OpenEquipmentComm(CID_DATA, dataDeviceIP.c_str(), 2112);
-	OpenEquipmentComm(CID_DISTANCE, distanceDeviceIP.c_str(), 2112);
-	if (!waitDevicesOnline(deviceConnectTimeOut))
+	OpenEquipmentComm(Radar::CID_DATA, Radar::dataDeviceIP.c_str(), 2112);
+	OpenEquipmentComm(Radar::CID_DISTANCE, Radar::distanceDeviceIP.c_str(), 2112);
+	if (!Radar::waitDevicesOnline(Radar::deviceConnectTimeOut))
 	{
 		LOG_FATAL("Failed to connect devices. Timeout!");
 		LOG_INFO("Devices Status: "
-			, "DataDevice "	, dataDeviceOnline ? "Online" : "Offline"
-			, "; DistanceDevice ", distanceDeviceOnline ? "Online" : "Offline", ".");
+			, "DataDevice "	, Radar::dataDeviceOnline ? "Online" : "Offline"
+			, "; DistanceDevice ", Radar::distanceDeviceOnline ? "Online" : "Offline", ".");
 		return CONNECTION_TIMEOUT;
 	}
 	LOG_INFO("Devices online.");
 
 
 	// 启动
-	startDevices();
+	Radar::startDevices();
 	LOG_INFO("Devices started.");
 
-	httplib::Client client(serverHost, serverPort);
+	httplib::Client client(Radar::serverHost, Radar::serverPort);
 
-	while (devicesOnline())
+	while (Radar::devicesOnline())
 	{
 		nlohmann::json data;
-		lidarXLock.lock();
-		lidarPolarLock.lock();
+		Radar::lidarXLock.lock();
+		Radar::lidarPolarLock.lock();
 		// 保存数据
-		data["x"] = lidarX;
-		data["begin_angle"] = lidarBegin;
-		data["end_angle"] = lidarEnd;
-		for (const auto& polar : lidarPolar)
+		data["x"] = Radar::lidarX;
+		data["begin_angle"] = Radar::lidarBegin;
+		data["end_angle"] = Radar::lidarEnd;
+		for (const auto& polar : Radar::lidarPolar)
 			data["polar"].push_back(polar);
-		lidarPolarLock.unlock();
-		lidarXLock.unlock();
+		Radar::lidarPolarLock.unlock();
+		Radar::lidarXLock.unlock();
 
-		auto ret = client.Post(serverPath.c_str(), data.dump(), "application/json");
+		auto ret = client.Post(Radar::serverPath.c_str(), data.dump(), "application/json");
 		if (!ret)
 		{
 			LOG_FATAL("Failed to connect server. Timeout!");
@@ -143,123 +100,13 @@ int main()
 			LOG_INFO("Send data to server successed. body: {", ret->body, "}");
 		}
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(dataSendTimeSpan));
+		std::this_thread::sleep_for(std::chrono::milliseconds(Radar::dataSendTimeSpan));
 	}
 	LOG_INFO("Devices offline.");
 	LOG_INFO("Devices Status: "
-		, "DataDevice ", dataDeviceOnline ? "Online" : "Offline"
-		, "; DistanceDevice ", distanceDeviceOnline ? "Online" : "Offline", ".");
+		, "DataDevice ", Radar::dataDeviceOnline ? "Online" : "Offline"
+		, "; DistanceDevice ", Radar::distanceDeviceOnline ? "Online" : "Offline", ".");
 
 	LOG_INFO("Application closed normally.");
 	return 0;
-}
-
-void CALLBACK onDataCallBack(INT _cid, UINT _lim_code, LPVOID _lim, INT _lim_len, INT _paddr)
-{
-	auto& lim = *static_cast<LIM_HEAD*>(_lim);
-
-	if (LIM_CheckSum(&lim) != lim.CheckSum)
-		return;
-	switch (lim.nCode)
-	{
-	case LIM_CODE_LMD:
-		switch (lim.nCID)
-		{
-		case CID_DATA:
-		{
-			// 保存极坐标数组
-			LMD_INFO& lmd_info = *LMD_Info(&lim);
-			LMD_D_Type* lmd = LMD_D(&lim);
-			std::lock_guard<std::mutex> lockGuard(lidarPolarLock);
-			lidarBegin = lmd_info.nBAngle;
-			lidarEnd = lmd_info.nEAngle;
-			if (lidarPolar.size() != lmd_info.nMDataNum)
-				lidarPolar.resize(lmd_info.nMDataNum);
-			for (int i = 0; i < lmd_info.nMDataNum; i++)
-				lidarPolar[i] = lmd[i];
-		}
-			break;
-		case CID_DISTANCE:
-		{
-			// 保存90°距离
-			LMD_INFO& lmd_info = *LMD_Info(&lim);
-			LMD_D_Type* lmd = LMD_D(&lim);
-			std::lock_guard<std::mutex> lockGuard(lidarXLock);
-			if (lmd_info.nBAngle <= 9000 || lmd_info.nEAngle >= 9000)
-				lidarX = lmd[(90 - lmd_info.nBAngle) * 2] / 10 * 10;
-			else
-				lidarX = -10000;
-		}
-			break;
-		default:
-			break;
-		}
-		break;
-	default:
-		break;
-	}
-}
-
-void CALLBACK onStateCallBack(INT _cid, UINT _state_code, LPCSTR _ip, INT _port, INT _paddr)
-{
-	switch (_state_code)
-	{
-	case EQCOMM_STATE_OK:
-	{
-		LIM_HEAD* lim = NULL;
-		LIM_Pack(lim, _cid, LIM_CODE_GET_LDBCONFIG, NULL);
-		SendLIM(_cid, lim, lim->nLIMLen);
-		LIM_Release(lim);
-
-		if (_cid == CID_DATA)
-			dataDeviceOnline = true;
-		else if (_cid == CID_DISTANCE)
-			distanceDeviceOnline = true;
-	}
-	break;
-	case EQCOMM_STATE_ERR:
-	case EQCOMM_STATE_LOST:
-	{
-		if (_cid == CID_DATA)
-			dataDeviceOnline = false;
-		else if (_cid == CID_DISTANCE)
-			distanceDeviceOnline = false;
-	}
-	break;
-	default:
-		break;
-	}
-}
-
-
-bool waitDevicesOnline(int timeOutMs)
-{
-	using namespace std::chrono;
-	auto in{ steady_clock::now() };
-	auto duration = std::chrono::milliseconds(timeOutMs);
-
-	while (!dataDeviceOnline && !distanceDeviceOnline)
-	{
-		std::this_thread::sleep_for(10ms);
-		if (steady_clock::now() - in > duration)
-			return false;
-	}
-	return true;
-}
-
-void startDevices()
-{
-	LIM_HEAD* lim = nullptr;
-	LIM_Pack(lim, CID_DATA, LIM_CODE_START_LMD);
-	SendLIM(CID_DATA, lim, lim->nLIMLen);
-	LIM_Release(lim);
-	lim = nullptr;
-	LIM_Pack(lim, CID_DISTANCE, LIM_CODE_START_LMD);
-	SendLIM(CID_DISTANCE, lim, lim->nLIMLen);
-	LIM_Release(lim);
-}
-
-inline bool devicesOnline()
-{
-	return dataDeviceOnline && distanceDeviceOnline;
 }

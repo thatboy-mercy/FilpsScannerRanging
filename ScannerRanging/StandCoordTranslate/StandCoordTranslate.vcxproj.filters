@@ -24,9 +24,6 @@
     <ClCompile Include="..\LidarDataPackage\LIM\lim.cpp">
       <Filter>Lib</Filter>
     </ClCompile>
-    <ClCompile Include="RadarMapping.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Config.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -43,10 +40,10 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="RadarMapping.h">
+    <ClInclude Include="Config.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Config.h">
+    <ClInclude Include="RadarMapping.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
